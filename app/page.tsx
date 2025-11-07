@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import ChatInterface from '@/components/ChatInterface'
-import LoginModal from '@/components/LoginModal'
+import ChatInterface from '../components/ChatInterface'
+import LoginModal from '../components/LoginModal'
 
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false)
