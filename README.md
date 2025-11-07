@@ -231,9 +231,8 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ```bash
 npm run build
+npm start
 ```
-
-This creates a static export in the `out` directory that can be served by any static file server.
 
 ## ⚙️ Configuration
 
@@ -281,69 +280,16 @@ if (username === 'admin' && password === 'admin') {
 - **React Hooks**: State management (useState, useEffect, useRef)
 - **localStorage**: Persistent data (admin status, query history, model selection)
 
-## 🚢 Deployment with Nginx
+## 🚢 Deployment
 
-This application is configured for static export and can be served using nginx.
+### Production Build
 
-### Option 1: Manual Deployment
+Build the application for production:
 
-1. **Build the static export:**
 ```bash
 npm run build
+npm start
 ```
-
-2. **Copy files to server:**
-```bash
-# Copy the 'out' directory to your server
-scp -r out/ user@your-server:/var/www/chat/
-```
-
-3. **Update nginx configuration:**
-   - Edit `nginx.conf` and update the `root` path and `server_name`
-   - Copy to nginx sites:
-```bash
-sudo cp nginx.conf /etc/nginx/sites-available/chat
-sudo ln -s /etc/nginx/sites-available/chat /etc/nginx/sites-enabled/
-```
-
-4. **Test and reload nginx:**
-```bash
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-### Option 2: Docker Deployment
-
-1. **Build Docker image:**
-```bash
-docker build -t chat-app .
-```
-
-2. **Run container:**
-```bash
-docker run -d -p 80:80 --name chat-app chat-app
-```
-
-### Option 3: Using Deploy Script
-
-1. **Make script executable:**
-```bash
-chmod +x deploy.sh
-```
-
-2. **Run deployment script:**
-```bash
-./deploy.sh
-```
-
-### Nginx Configuration Details
-
-The provided `nginx.conf` includes:
-- **Static file serving**: Serves Next.js static export
-- **SPA routing**: Handles client-side routing with fallback to `index.html`
-- **Gzip compression**: Reduces file sizes for faster loading
-- **Caching**: Optimized cache headers for static assets
-- **Security headers**: Basic security headers included
 
 ### Important Notes
 
@@ -351,16 +297,6 @@ The provided `nginx.conf` includes:
   - Your backend API is accessible from the client browser
   - CORS is properly configured on your API server
   - The API server is running on port 8000
-
-- **Static Export Limitations**:
-  - API routes (`/app/api/*`) are not available in static export
-  - The app uses external API at `:8000/chat1`, so this is not an issue
-  - All routing is client-side
-
-- **Environment Variables**: If you need environment variables, you'll need to:
-  - Build them into the static files at build time
-  - Use a build-time script to inject them
-  - Or serve them via a separate endpoint
 
 ## 📄 License
 
