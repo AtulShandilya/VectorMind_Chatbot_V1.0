@@ -24,12 +24,16 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
   const [queryHistory, setQueryHistory] = useState<string[]>([])
   const [selectedQuery, setSelectedQuery] = useState<string>('')
   const [selectedModel, setSelectedModel] = useState<string>('gemini-2.5-flash-preview-05-20')
+  const [apiVersion, setApiVersion] = useState<string>('chat_v2')
+  const [port, setPort] = useState<string>('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const models = [
     'gemini-2.5-flash-preview-05-20',
     'gemma3:12b'
   ]
+
+  const apiVersions = ['chat_v1', 'chat_v2', 'chat_v3']
 
   const scrollToBottom = (instant = false) => {
     setTimeout(() => {
@@ -51,6 +55,16 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
     const savedModel = localStorage.getItem('selectedModel')
     if (savedModel && models.includes(savedModel)) {
       setSelectedModel(savedModel)
+    }
+    // Load API version from localStorage
+    const savedApiVersion = localStorage.getItem('apiVersion')
+    if (savedApiVersion && apiVersions.includes(savedApiVersion)) {
+      setApiVersion(savedApiVersion)
+    }
+    // Load port from localStorage
+    const savedPort = localStorage.getItem('apiPort')
+    if (savedPort) {
+      setPort(savedPort)
     }
   }, [])
 
@@ -92,8 +106,18 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
         formData.append('file', file)
       }
 
-      // Construct API URL using current origin with /chat1 path
-      const apiUrl = `${window.location.origin}/chat1`
+      // Map API version to URL path (chat_v1 -> chat1, chat_v2 -> chat2, chat_v3 -> chat3)
+      const apiPath = apiVersion.replace('_v', '')
+      
+      // Construct API URL based on version and port
+      let apiUrl: string
+      if (port && port.trim() !== '') {
+        // If port is provided: <url>:port/chat1
+        apiUrl = `${window.location.protocol}//${window.location.hostname}:${port}/${apiPath}`
+      } else {
+        // If port is not provided: <url>/chat1
+        apiUrl = `${window.location.origin}/${apiPath}`
+      }
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -146,6 +170,18 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
     localStorage.setItem('selectedModel', model)
   }
 
+  const handleApiVersionChange = (version: string) => {
+    setApiVersion(version)
+    localStorage.setItem('apiVersion', version)
+  }
+
+  const handlePortChange = (newPort: string) => {
+    // Only allow digits and max 5 digits
+    const numericPort = newPort.replace(/\D/g, '').slice(0, 5)
+    setPort(numericPort)
+    localStorage.setItem('apiPort', numericPort)
+  }
+
   return (
     <div className="flex-1 flex overflow-hidden">
       <ChatSidebar
@@ -154,7 +190,7 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
       />
       <div className="flex-1 flex flex-col">
         <div className="border-b border-gray-200 bg-white px-6 py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <label className="text-sm font-medium text-gray-700">Model:</label>
             <select
               value={selectedModel}
@@ -167,6 +203,33 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
                 </option>
               ))}
             </select>
+            
+            {isAdmin && (
+              <>
+                <label className="text-sm font-medium text-gray-700 ml-4">API Version:</label>
+                <select
+                  value={apiVersion}
+                  onChange={(e) => handleApiVersionChange(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm font-medium"
+                >
+                  {apiVersions.map((version) => (
+                    <option key={version} value={version}>
+                      {version}
+                    </option>
+                  ))}
+                </select>
+                
+                <label className="text-sm font-medium text-gray-700 ml-4">Port:</label>
+                <input
+                  type="text"
+                  value={port}
+                  onChange={(e) => handlePortChange(e.target.value)}
+                  placeholder="Optional"
+                  maxLength={5}
+                  className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-sm font-medium"
+                />
+              </>
+            )}
           </div>
         </div>
         <MessageList messages={messages} messagesEndRef={messagesEndRef} />
