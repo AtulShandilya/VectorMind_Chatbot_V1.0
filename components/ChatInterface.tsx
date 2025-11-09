@@ -93,7 +93,7 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
       }
 
       // Construct API URL using current hostname with port 8000
-      const apiUrl = `${window.location.protocol}//${window.location.hostname}:8000/chat1`
+      const apiUrl = `${window.location.protocol}//${window.location.hostname}:/chat1`
 
       const response = await fetch(apiUrl, {
         method: 'POST',
