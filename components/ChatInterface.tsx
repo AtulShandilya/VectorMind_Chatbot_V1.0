@@ -68,7 +68,7 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
     }
   }, [])
 
-  const handleSendMessage = async (text: string, file?: File, mode: 'query' | 'input' | 'data' = 'query', operation?: 'get' | 'delete') => {
+  const handleSendMessage = async (text: string, file?: File, mode: 'query' | 'input' | 'data' = 'query', operation?: 'get' | 'delete' | 'similarity') => {
     if (!text.trim() && !file) return
 
     const messageText = text.trim() // Original text without prefix

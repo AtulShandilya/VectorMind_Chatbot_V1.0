@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 
 interface ChatInputProps {
-  onSendMessage: (text: string, file?: File, mode?: 'query' | 'input' | 'data', operation?: 'get' | 'delete') => void
+  onSendMessage: (text: string, file?: File, mode?: 'query' | 'input' | 'data', operation?: 'get' | 'delete' | 'similarity') => void
   isAdmin: boolean
   selectedQuery?: string
   onQuerySelected?: () => void
@@ -13,7 +13,7 @@ export default function ChatInput({ onSendMessage, isAdmin, selectedQuery, onQue
   const [text, setText] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [mode, setMode] = useState<'query' | 'input' | 'data'>('input')
-  const [operation, setOperation] = useState<'get' | 'delete'>('get')
+  const [operation, setOperation] = useState<'get' | 'delete' | 'similarity'>('get')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -124,6 +124,17 @@ export default function ChatInput({ onSendMessage, isAdmin, selectedQuery, onQue
                 }`}
               >
                 Delete
+              </button>
+              <button
+                type="button"
+                onClick={() => setOperation('similarity')}
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  operation === 'similarity'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Similarity
               </button>
             </div>
           )}
