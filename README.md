@@ -293,7 +293,7 @@ npm start
 
 ### Important Notes
 
-- **API Endpoint**: The app makes API calls to `<hostname>:8000/chat1`. Ensure:
+- **API Endpoint**: The app makes API calls to `<hostname>:/chat1`. Ensure:
   - Your backend API is accessible from the client browser
   - CORS is properly configured on your API server
   - The API server is running on port 8000

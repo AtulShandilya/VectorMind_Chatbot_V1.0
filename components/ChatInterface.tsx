@@ -92,8 +92,8 @@ export default function ChatInterface({ isAdmin }: ChatInterfaceProps) {
         formData.append('file', file)
       }
 
-      // Construct API URL using current hostname with port 8000
-      const apiUrl = `${window.location.protocol}//${window.location.hostname}:/chat1`
+      // Construct API URL using current origin with /chat1 path
+      const apiUrl = `${window.location.origin}/chat1`
 
       const response = await fetch(apiUrl, {
         method: 'POST',
